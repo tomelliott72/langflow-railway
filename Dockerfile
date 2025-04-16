@@ -3,13 +3,14 @@
 # CMD ["python", "-m", "langflow", "run", "--host", "0.0.0.0", "--port", "7860"]
 FROM langflowai/langflow:latest
 
-# Copy your custom flows and the .env file into the container
+# Set working directory (safe default for Langflow image)
+WORKDIR /app
+
+# Copy in your custom flows and .env
 COPY flows /app/flows
 COPY .env .env
 
-# Optionally, export these as environment variables (safeguard)
-# This ensures any tools expecting them as ENV, not just from .env, will find them
+# Export variables from .env into environment at build time
 RUN set -a && . .env && set +a
 
-# Expose port for Railway
 EXPOSE 7860
