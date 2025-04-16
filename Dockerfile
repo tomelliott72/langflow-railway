@@ -1,25 +1,35 @@
-# Use Python base image
-FROM python:3.10-slim
+# Use slimmed-down Python 3.13 image
+FROM python:3.13-slim
 
-# Set workdir
+# Set working directory inside container
 WORKDIR /app
 
-# Install git + dependencies
-RUN apt-get update && apt-get install -y git gcc && rm -rf /var/lib/apt/lists/*
+# Install system packages needed to build Python dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    gcc \
+    build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clone Langflow source (latest release or a specific tag)
+# Clone the Langflow repo from GitHub
 RUN git clone https://github.com/langflow-ai/langflow.git .
 
-# Install Python dependencies
-RUN pip install --upgrade pip && pip install .
+# Optional: checkout a specific version for stability
+# RUN git checkout v0.5.0
 
-# Copy your flows into the app
+# Upgrade pip and install Langflow with all extras
+RUN pip install --upgrade pip
+RUN pip install ".[all]"
+
+# Copy your custom flows into the container
 COPY flows /app/flows
 
-# Set environment variable
+# Set environment variables
 ENV PORT=7860
 
-# Expose port
+# Expose the port for Railway or local access
 EXPOSE 7860
 
 # Start Langflow
