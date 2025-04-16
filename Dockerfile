@@ -1,10 +1,26 @@
-# Use the official Langflow image
-FROM ghcr.io/langflow-ai/langflow:latest
+# Use Python base image
+FROM python:3.10-slim
 
-# Copy your custom flows/config into the container
+# Set workdir
+WORKDIR /app
+
+# Install git + dependencies
+RUN apt-get update && apt-get install -y git gcc && rm -rf /var/lib/apt/lists/*
+
+# Clone Langflow source (latest release or a specific tag)
+RUN git clone https://github.com/langflow-ai/langflow.git .
+
+# Install Python dependencies
+RUN pip install --upgrade pip && pip install .
+
+# Copy your flows into the app
 COPY flows /app/flows
 
-# Optional: expose a different port (default is 7860)
+# Set environment variable
 ENV PORT=7860
 
-# Entrypoint is already defined in the base image (uvicorn)
+# Expose port
+EXPOSE 7860
+
+# Start Langflow
+CMD ["python", "-m", "langflow", "run", "--host", "0.0.0.0", "--port", "7860"]
