@@ -1,5 +1,5 @@
 # Use the official Langflow image
-FROM langflow/langflow:latest
+FROM ghcr.io/langflow-ai/langflow:latest
 
 # Copy your custom flows/config into the container
 COPY flows /app/flows
