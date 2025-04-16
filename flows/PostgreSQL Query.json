@@ -1,0 +1,220 @@
+{
+  "access_type": "PRIVATE",
+  "data": {
+    "edges": [],
+    "nodes": [
+      {
+        "data": {
+          "id": "postgresql_query-8Ceoc",
+          "node": {
+            "base_classes": [
+              "Data",
+              "list",
+              "Sequence",
+              "Text",
+              "Tool"
+            ],
+            "beta": false,
+            "conditional_paths": [],
+            "custom_fields": {},
+            "description": "Execute a query against a PostgreSQL database and return the results.",
+            "display_name": "PostgreSQL Query",
+            "documentation": "",
+            "edited": true,
+            "field_order": [
+              "host",
+              "user",
+              "password",
+              "database",
+              "query"
+            ],
+            "frozen": false,
+            "icon": "database",
+            "official": false,
+            "output_types": [],
+            "outputs": [
+              {
+                "cache": true,
+                "display_name": "Data",
+                "method": "run_model",
+                "name": "api_run_model",
+                "selected": "Data",
+                "types": [
+                  "Data",
+                  "list",
+                  "Text"
+                ],
+                "value": "__UNDEFINED__"
+              },
+              {
+                "cache": true,
+                "display_name": "Tool",
+                "method": "build_tool",
+                "name": "api_build_tool",
+                "selected": "Tool",
+                "types": [
+                  "Tool",
+                  "Sequence"
+                ],
+                "value": "__UNDEFINED__"
+              }
+            ],
+            "pinned": false,
+            "template": {
+              "_type": "Component",
+              "code": {
+                "advanced": true,
+                "dynamic": true,
+                "fileTypes": [],
+                "file_path": "",
+                "info": "",
+                "list": false,
+                "load_from_db": false,
+                "multiline": true,
+                "name": "code",
+                "password": false,
+                "placeholder": "",
+                "required": true,
+                "show": true,
+                "title_case": false,
+                "type": "code",
+                "value": "from typing import Optional\nfrom langflow.base.langchain_utilities.model import LCToolComponent\nfrom langflow.inputs import MessageTextInput, SecretStrInput\nfrom langflow.schema import Data\nfrom langflow.field_typing import Tool\nfrom langchain.tools import StructuredTool\nfrom pydantic import BaseModel, Field\nimport psycopg2  # PostgreSQL connect lib\n\n\nclass PostgreSQLQueryComponent(LCToolComponent):\n    display_name: str = \"PostgreSQL Query\"\n    description: str = \"Execute a query against a PostgreSQL database and return the results.\"\n    name = \"postgresql_query\"\n    icon = \"database\"\n\n    inputs = [\n        MessageTextInput(\n            name=\"host\",\n            display_name=\"Host\",\n            info=\"PostgreSQL server address\",\n        ),\n        MessageTextInput(\n            name=\"user\",\n            display_name=\"User\",\n            info=\"Username for authentication\",\n        ),\n        SecretStrInput(\n            name=\"password\",\n            display_name=\"Password\",\n            info=\"Password for authentication\",\n        ),\n        MessageTextInput(\n            name=\"database\",\n            display_name=\"Database\",\n            info=\"Database name\",\n        ),\n        MultilineInput(\n            name=\"query\",\n            display_name=\"Query\",\n            info=\"The SQL query to execute\",\n        ),\n    ]\n\n    class PostgreSQLQuerySchema(BaseModel):\n        host: str = Field(..., description=\"PostgreSQL server address\")\n        user: str = Field(..., description=\"Username for authentication\")\n        password: str = Field(..., description=\"Password for authentication\")\n        database: str = Field(..., description=\"Database name\")\n        query: str = Field(..., description=\"The SQL query to execute\")\n\n    def run_model(self) -> Text:\n        # Coletando os inputs\n        input_dict = {input_obj.name: input_obj.value for input_obj in self.inputs}\n\n        host = input_dict.get(\"host\")\n        user = input_dict.get(\"user\")\n        password = input_dict.get(\"password\")\n        database = input_dict.get(\"database\")\n        query = input_dict.get(\"query\")\n\n        # Conectando ao banco de dados PostgreSQL\n        try:\n            connection = psycopg2.connect(\n                host=host,\n                user=user,\n                password=password,\n                database=database\n            )\n            cursor = connection.cursor()\n            cursor.execute(query)\n            result = cursor.fetchall()\n            cursor.close()\n            connection.close()\n            \n            # Convertendo o resultado para uma string formatada\n            result_text = \"\\n\".join([str(row) for row in result])\n            self.status = result_text\n            return result_text\n\n        except Exception as e:\n            if connection:\n                connection.close()  # Garantir que a conexão seja fechada em caso de erro\n            self.status = f\"Error executing query: {str(e)}\"\n            return f\"Error executing query: {str(e)}\"\n\n    def build_tool(self) -> Tool:\n        return StructuredTool.from_function(\n            name=\"postgresql_query\",\n            description=\"Executes a query against a PostgreSQL database. Input must include 'host', 'user', 'password', 'database', and 'query'.\",\n            func=self._execute_query,\n            args_schema=self.PostgreSQLQuerySchema,\n        )\n\n    def _execute_query(self, host: str, user: str, password: str, database: str, query: str) -> str:\n        try:\n            connection = psycopg2.connect(\n                host=host,\n                user=user,\n                password=password,\n                database=database\n            )\n            cursor = connection.cursor()\n            cursor.execute(query)\n            result = cursor.fetchall()\n            cursor.close()\n            connection.close()\n            \n            # Convertendo o resultado para uma string formatada\n            return \"\\n\".join([str(row) for row in result])\n        except Exception as e:\n            if connection:\n                connection.close()\n            return f\"Error executing query: {str(e)}\""
+              },
+              "database": {
+                "_input_type": "MessageTextInput",
+                "advanced": false,
+                "display_name": "Database",
+                "dynamic": false,
+                "info": "Database name",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "load_from_db": false,
+                "name": "database",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "professor"
+              },
+              "host": {
+                "_input_type": "MessageTextInput",
+                "advanced": false,
+                "display_name": "Host",
+                "dynamic": false,
+                "info": "PostgreSQL server address",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "load_from_db": false,
+                "name": "host",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "192.168.154.7"
+              },
+              "password": {
+                "_input_type": "SecretStrInput",
+                "advanced": false,
+                "display_name": "Password",
+                "dynamic": false,
+                "info": "Password for authentication",
+                "input_types": [
+                  "Message"
+                ],
+                "load_from_db": false,
+                "name": "password",
+                "password": true,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "type": "str",
+                "value": ""
+              },
+              "query": {
+                "_input_type": "MultilineInput",
+                "advanced": false,
+                "display_name": "Query",
+                "dynamic": false,
+                "info": "The SQL query to execute",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "load_from_db": false,
+                "multiline": true,
+                "name": "query",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "select nome from usuarios order by nome asc"
+              },
+              "user": {
+                "_input_type": "MessageTextInput",
+                "advanced": false,
+                "display_name": "User",
+                "dynamic": false,
+                "info": "Username for authentication",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "load_from_db": false,
+                "name": "user",
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "type": "str",
+                "value": "postgres"
+              }
+            }
+          },
+          "type": "postgresql_query"
+        },
+        "id": "postgresql_query-8Ceoc",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "type": "genericNode"
+      }
+    ],
+    "viewport": {
+      "x": 1,
+      "y": 1,
+      "zoom": 1
+    }
+  },
+  "description": "Execute a query against a PostgreSQL database and return the results.",
+  "endpoint_name": null,
+  "folder_id": "a7ab8906-27cb-4255-b45e-a7618dd4f136",
+  "fs_path": null,
+  "gradient": null,
+  "icon": null,
+  "icon_bg_color": null,
+  "id": "e865f45a-466c-4a54-b698-d789003b5211",
+  "is_component": true,
+  "locked": false,
+  "name": "PostgreSQL Query",
+  "tags": [],
+  "updated_at": "2025-04-14T11:49:55+00:00",
+  "user_id": "cd7c608d-b866-4a4d-a6a2-0e21815df645",
+  "webhook": false
+}
