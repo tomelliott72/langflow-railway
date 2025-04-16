@@ -20,8 +20,9 @@ RUN git clone https://github.com/langflow-ai/langflow.git .
 # RUN git checkout v0.5.0
 
 # Upgrade pip and install Langflow with all extras
+RUN ls -la /app && cat pyproject.toml || echo "Missing pyproject.toml"
 RUN pip install --upgrade pip
-RUN pip install -e ".[all]"
+RUN pip install .
 
 # Copy your custom flows into the container
 COPY flows /app/flows
