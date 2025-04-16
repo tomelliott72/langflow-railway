@@ -21,7 +21,7 @@ RUN git clone https://github.com/langflow-ai/langflow.git .
 
 # Upgrade pip and install Langflow with all extras
 RUN pip install --upgrade pip
-RUN pip install ".[all]"
+RUN pip install -e ".[all]"
 
 # Copy your custom flows into the container
 COPY flows /app/flows
