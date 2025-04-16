@@ -1,4 +1,4 @@
-FROM langflowai/langflow:1.3.2
+FROM langflowai/langflow:latest
 
 WORKDIR /app
 
