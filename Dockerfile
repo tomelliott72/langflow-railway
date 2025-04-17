@@ -1,20 +1,23 @@
 FROM langflowai/langflow:1.3.2
 
+USER root  # ✅ Run everything below as root so we can overwrite global packages
+
 WORKDIR /app
 
-# ✅ Uninstall the default (v4.x) Weaviate client that comes with Langflow
+# ✅ Ensure the global package gets removed
 RUN pip uninstall -y weaviate-client
 
-# ✅ Reinstall 3.24.1 globally (not just for user)
+# ✅ Reinstall the correct version system-wide (not just user-level)
 RUN pip install --no-cache-dir weaviate-client==3.24.1
 
-# Optional: copy anything else you need into the container (e.g., static assets)
-# COPY some-dir /app/some-dir
+# Optional: drop back to a safer user
+# USER langflow
 
-# Set environment variables explicitly
+# Set environment variables
 ENV PORT=7860
 ENV LANGFLOW_LOG_LEVEL=debug
 
 EXPOSE 7860
 
+# Run Langflow
 CMD ["bash", "-c", "langflow run --host 0.0.0.0 --port 7860"]
