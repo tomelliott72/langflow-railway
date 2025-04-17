@@ -4,13 +4,15 @@ WORKDIR /app
 
 COPY flows /app/flows
 
+RUN mkdir -p /app/langflow-config-dir
+
 # Set environment variables explicitly
 # ENV LANGFLOW_DATABASE_URL=postgresql://postgres:yVbfLlnMNFCLzCnpxIJagjpYfFbVIlfB@postgres.railway.internal:5432/railway
 # ENV LANGFLOW_SECRET_KEY=your-secret-key
 # ENV LANGFLOW_PORT=7860
 ENV PORT=7860
 ENV LANGFLOW_LOG_LEVEL=debug
-RUN mkdir -p /app/langflow-config-dir
+
 
 
 EXPOSE 7860
