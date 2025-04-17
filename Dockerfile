@@ -11,4 +11,4 @@ ENV LANGFLOW_LOG_LEVEL=debug
 
 EXPOSE 7860
 
-CMD ["langflow", "run", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["bash", "-c", "langflow run --host 0.0.0.0 --port 7860"]
