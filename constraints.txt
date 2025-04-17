@@ -1,6 +1,0 @@
-# constraints.txt
-langchain==0.3.10
-weaviate-client==3.24.1
-langchain-community==0.3.10
-composio-langchain==0.7.11
-langchain-google-calendar-tools==0.0.1
