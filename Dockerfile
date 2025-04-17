@@ -10,7 +10,6 @@ COPY flows /app/flows
 # ENV LANGFLOW_PORT=7860
 ENV PORT=7860
 ENV LANGFLOW_LOG_LEVEL=debug
-ENV LANGFLOW_CONFIG_DIR=/app/langflow-config-dir
 RUN mkdir -p /app/langflow-config-dir
 
 
