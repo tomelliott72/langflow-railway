@@ -1,15 +1,23 @@
-FROM python:3.10-slim
+FROM langflowai/langflow:1.3.2
+
+USER root  # ✅ Run everything below as root so we can overwrite global packages
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    git \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# ✅ Ensure the global package gets removed
+# RUN pip uninstall -y weaviate-client
 
-COPY constraints.txt /app/constraints.txt
+# ✅ Reinstall the correct version system-wide (not just user-level)
+#  RUN pip install --no-cache-dir weaviate-client==3.24.1
 
-RUN pip install --upgrade pip
+# Optional: drop back to a safer user
+# USER langflow
 
-# ✅ Install Langflow WITH constraint enforcement
-RUN pip install "langflow==1.3.2" -c /app/constraints.txt
+# Set environment variables
+ENV PORT=7860
+ENV LANGFLOW_LOG_LEVEL=debug
+
+EXPOSE 7860
+
+# Run Langflow
+CMD ["bash", "-c", "langflow run --host 0.0.0.0 --port 7860"]
