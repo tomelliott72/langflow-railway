@@ -2,9 +2,11 @@ FROM langflowai/langflow:1.3.2
 
 WORKDIR /app
 
-COPY flows /app/flows
+# Create the config directory
+RUN mkdir -p /app/langflow-config-dir/flows
 
-RUN mkdir -p /app/langflow-config-dir
+# Copy flows from your repo into the config directory
+COPY flows /app/langflow-config-dir/flows
 
 # Set environment variables explicitly
 # ENV LANGFLOW_DATABASE_URL=postgresql://postgres:yVbfLlnMNFCLzCnpxIJagjpYfFbVIlfB@postgres.railway.internal:5432/railway
