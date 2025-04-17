@@ -10,6 +10,7 @@ RUN mkdir -p /app/langflow-config-dir
 # ENV LANGFLOW_DATABASE_URL=postgresql://postgres:yVbfLlnMNFCLzCnpxIJagjpYfFbVIlfB@postgres.railway.internal:5432/railway
 # ENV LANGFLOW_SECRET_KEY=your-secret-key
 # ENV LANGFLOW_PORT=7860
+ENV LANGFLOW_CONFIG_DIR=/app/langflow-config-dir
 ENV PORT=7860
 ENV LANGFLOW_LOG_LEVEL=debug
 
