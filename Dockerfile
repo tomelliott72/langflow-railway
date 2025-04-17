@@ -1,17 +1,23 @@
-FROM langflowai/langflow:1.3.2
+# Use official Python base image
+FROM python:3.10-slim
 
-USER root  # ✅ Run everything below as root so we can overwrite global packages
-
+# Set working directory
 WORKDIR /app
 
-# ✅ Ensure the global package gets removed
-RUN pip uninstall -y weaviate-client
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# ✅ Reinstall the correct version system-wide (not just user-level)
-RUN pip install --no-cache-dir weaviate-client==3.24.1
+# Install Langflow and specific Weaviate version
+RUN pip install --upgrade pip
 
-# Optional: drop back to a safer user
-# USER langflow
+# ✅ Install specific version of weaviate-client first
+RUN pip install weaviate-client==3.24.1
+
+# ✅ Install Langflow from GitHub, or PyPI (locked to 1.3.2)
+RUN pip install langflow==1.3.2
 
 # Set environment variables
 ENV PORT=7860
@@ -19,5 +25,5 @@ ENV LANGFLOW_LOG_LEVEL=debug
 
 EXPOSE 7860
 
-# Run Langflow
-CMD ["bash", "-c", "langflow run --host 0.0.0.0 --port 7860"]
+# Start Langflow
+CMD ["langflow", "run", "--host", "0.0.0.0", "--port", "7860"]
