@@ -2,8 +2,8 @@ FROM langflowai/langflow:1.3.2
 
 WORKDIR /app
 
-# ✅ Install specific version of Weaviate client for compatibility
-RUN pip install weaviate-client==3.24.1
+# ✅ Force reinstallation of weaviate-client 3.24.1 to override Langflow's 4.x version
+RUN pip install --no-cache-dir --force-reinstall weaviate-client==3.24.1
 
 # Optional: copy anything else you need into the container (e.g., static assets)
 # COPY some-dir /app/some-dir
