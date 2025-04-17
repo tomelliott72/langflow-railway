@@ -5,7 +5,7 @@ WORKDIR /app
 COPY flows /app/flows
 
 # Set environment variables explicitly
-ENV LANGFLOW_DATABASE_URL=postgresql://postgres:MhnvzmHcLimoTrNVjJFchWphsThDRhEG@postgres.railway.internal:5432/railway
+ENV LANGFLOW_DATABASE_URL=postgresql://postgres:yVbfLlnMNFCLzCnpxIJagjpYfFbVIlfB@postgres.railway.internal:5432/railway
 ENV LANGFLOW_SECRET_KEY=your-secret-key
 ENV OPENAI_API_KEY=sk-...
 ENV LANGFLOW_PORT=7860
