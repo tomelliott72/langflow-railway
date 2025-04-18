@@ -8,7 +8,7 @@ ENV LANGFLOW_LOG_LEVEL=debug
 EXPOSE 7860
 
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+RUN chmod +x /app/start.sh && ls -la /app
 
 CMD ["bash", "/app/start.sh"]
 
