@@ -2,12 +2,24 @@
 
 echo "🔥 Running start.sh"
 
-# Output the ENV vars so we know they're being passed
-echo "🔧 SUPABASE_URL=$SUPABASE_URL"
-echo "🔧 SUPABASE_KEY=$SUPABASE_KEY"
+# 🔧 Core Langflow ENV (not globals)
+echo "🔧 CORS_ALLOW_ORIGINS=$CORS_ALLOW_ORIGINS"
+echo "🔧 LANGFLOW_DATABASE_URL=$LANGFLOW_DATABASE_URL"
+echo "🔧 LANGFLOW_LOG_LEVEL=$LANGFLOW_LOG_LEVEL"
+echo "🔧 LANGFLOW_PORT=$LANGFLOW_PORT"
 
-# Langflow will read these global vars from ENV if this is exported
-export LANGFLOW_VARIABLES_TO_GET_FROM_ENVIRONMENT="SUPABASE_URL,SUPABASE_KEY"
+# 🌐 Variables to inject into Langflow Globals
+echo "🌐 OPENAI_API_KEY=$OPENAI_API_KEY"
+echo "🌐 SUPABASE_SERVICE_KEY=$SUPABASE_SERVICE_KEY"
+echo "🌐 SUPABASE_TABLE_NAME=$SUPABASE_TABLE_NAME"
+echo "🌐 SUPABASE_URL=$SUPABASE_URL"
+echo "🌐 UNSTRUCTURED_API_KEY=$UNSTRUCTURED_API_KEY"
+echo "🌐 UNSTRUCTURED_API_URL=$UNSTRUCTURED_API_URL"
+echo "🌐 MEM0_API_KEY=$MEM0_API_KEY"
+echo "🌐 PORT=$PORT"
+
+# ✅ Set which ENV vars should be injected into Langflow Globals
+export LANGFLOW_VARIABLES_TO_GET_FROM_ENVIRONMENT="OPENAI_API_KEY,SUPABASE_SERVICE_KEY,SUPABASE_TABLE_NAME,SUPABASE_URL,UNSTRUCTURED_API_KEY,UNSTRUCTURED_API_URL,MEM0_API_KEY,PORT"
 
 echo "🚀 Starting Langflow with injected ENV globals..."
-exec langflow run --host 0.0.0.0 --port 7860
+exec langflow run --host 0.0.0.0 --port ${PORT:-7860}
